@@ -10,6 +10,7 @@ import {
   Cell,
 } from '@tanstack/react-table';
 
+// Styled components for table
 const TableContainer = styled.div`
   overflow-x: auto;
   max-height: 500px;
@@ -36,6 +37,7 @@ const Table = styled.table`
   }
 `;
 
+// Define table data type
 type TableData = Record<string, any>;
 
 interface ResultTableProps {
@@ -43,6 +45,7 @@ interface ResultTableProps {
 }
 
 const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
+  // Define columns dynamically based on data keys
   const columns = React.useMemo<ColumnDef<TableData, unknown>[]>(
     () =>
       data.length > 0
