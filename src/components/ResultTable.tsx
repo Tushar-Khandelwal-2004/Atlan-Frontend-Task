@@ -91,14 +91,6 @@ const Table = styled.table<{ columnResizeMode: ColumnResizeMode }>`
   }
 `;
 
-const TableHeader = styled.div`
-  width: 100%;
-`;
-
-const VirtualBody = styled.div`
-  width: 100%;
-`;
-
 const ActionBar = styled.div`
   display: flex;
   justify-content: space-between;
