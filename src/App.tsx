@@ -4,7 +4,7 @@ import QueryEditor from './components/QueryEditor';
 import ResultTable from './components/ResultTable';
 import TableSelector from './components/TableSelector';
 import QuerySelector from './components/QuerySelector';
-import CsvDownloader from './components/CsvDownloader';
+import MultiFormatExporter from './components/MultiFormatExporter';
 import TableInfo from './components/TableInfo';
 import { tablesData } from './data/tablesData';
 
@@ -179,9 +179,9 @@ const App: React.FC = () => {
           <RunButton onClick={executeQuery} disabled={isLoading}>
             {isLoading ? 'Running...' : 'Run Query'}
           </RunButton>
-          <CsvDownloader 
+          <MultiFormatExporter 
             data={results} 
-            filename={`${selectedTable}_query_results.csv`} 
+            filename={`${selectedTable}_query_results`} 
           />
         </ActionBar>
       </QuerySection>

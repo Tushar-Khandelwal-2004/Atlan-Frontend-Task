@@ -20,7 +20,7 @@ import { FixedSizeList as List } from 'react-window';
 import type { ListChildComponentProps } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { useInView } from 'react-intersection-observer';
-import CsvDownloader from './CsvDownloader';
+import MultiFormatExporter from './MultiFormatExporter';
 
 // Styled components for table
 const TableContainer = styled.div`
@@ -538,9 +538,9 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
             </ToggleButton>
           </DisplayModeToggle>
         </div>
-        <CsvDownloader 
+        <MultiFormatExporter 
           data={currentData}
-          filename="filtered_query_results.csv"
+          filename="query_results"
         />
       </ActionBar>
       <TableContainer>
