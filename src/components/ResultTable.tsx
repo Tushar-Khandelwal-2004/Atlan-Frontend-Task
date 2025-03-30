@@ -435,6 +435,11 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
 
   // Get the current filtered and sorted rows data
   const currentData = table.getRowModel().rows.map(row => row.original);
+  
+  // Get complete filtered data for export (regardless of pagination)
+  const exportData = useMemo(() => {
+    return table.getFilteredRowModel().rows.map(row => row.original);
+  }, [table.getFilteredRowModel().rows]);
 
   // Get visible rows based on display mode
   const visibleRows = useMemo(() => {
@@ -539,7 +544,7 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
           </DisplayModeToggle>
         </div>
         <MultiFormatExporter 
-          data={currentData}
+          data={exportData}
           filename="query_results"
         />
       </ActionBar>
