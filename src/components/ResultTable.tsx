@@ -433,9 +433,6 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  // Get the current filtered and sorted rows data
-  const currentData = table.getRowModel().rows.map(row => row.original);
-  
   // Get complete filtered data for export (regardless of pagination)
   const exportData = useMemo(() => {
     return table.getFilteredRowModel().rows.map(row => row.original);
