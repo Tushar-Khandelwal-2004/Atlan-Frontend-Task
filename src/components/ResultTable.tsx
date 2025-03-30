@@ -5,6 +5,9 @@ import {
   getCoreRowModel,
   ColumnDef,
   flexRender,
+  HeaderGroup,
+  Row,
+  Cell,
 } from '@tanstack/react-table';
 
 const TableContainer = styled.div`
@@ -33,12 +36,14 @@ const Table = styled.table`
   }
 `;
 
+type TableData = Record<string, any>;
+
 interface ResultTableProps {
-  data: any[];
+  data: TableData[];
 }
 
 const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
-  const columns = React.useMemo<ColumnDef<any, any>[]>(
+  const columns = React.useMemo<ColumnDef<TableData, unknown>[]>(
     () =>
       data.length > 0
         ? Object.keys(data[0]).map((key) => ({
@@ -59,7 +64,7 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
     <TableContainer>
       <Table>
         <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map((headerGroup: HeaderGroup<TableData>) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id}>
@@ -72,9 +77,9 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map((row: Row<TableData>) => (
             <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
+              {row.getVisibleCells().map((cell: Cell<TableData, unknown>) => (
                 <td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
