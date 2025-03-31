@@ -2,31 +2,61 @@ import React from 'react';
 import styled from 'styled-components';
 
 const TableInfoContainer = styled.div`
-  margin: 15px 0;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  border-left: 4px solid #4CAF50;
+  background: ${props => props.theme.cardBackground};
+  border: 1px solid ${props => props.theme.border};
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
 `;
 
-const Title = styled.h3`
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #333;
+const TableName = styled.h3`
+  color: ${props => props.theme.primary};
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: "📊";
+    font-size: 1.2rem;
+  }
 `;
 
-const ColumnList = styled.div`
+const ColumnList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 0.75rem;
 `;
 
-const ColumnItem = styled.div`
-  background-color: #e7f3ff;
-  padding: 6px 12px;
+const ColumnItem = styled.li`
+  background: ${props => props.theme.background};
+  padding: 0.5rem 1rem;
   border-radius: 4px;
-  font-family: monospace;
-  font-weight: bold;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 120px;
+`;
+
+const ColumnName = styled.span`
+  color: ${props => props.theme.primary};
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+`;
+
+const ColumnType = styled.span`
+  color: ${props => props.theme.textSecondary};
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.8;
 `;
 
 interface TableInfoProps {
@@ -35,13 +65,26 @@ interface TableInfoProps {
 }
 
 const TableInfo: React.FC<TableInfoProps> = ({ tableName, columns }) => {
+  const getColumnNameAndType = (column: string) => {
+    const parts = column.split(' ');
+    const type = parts.pop();
+    const name = parts.join(' ');
+    return { name, type };
+  };
+
   return (
     <TableInfoContainer>
-      <Title>Table Structure: {tableName}</Title>
+      <TableName>Table Structure: {tableName}</TableName>
       <ColumnList>
-        {columns.map((column) => (
-          <ColumnItem key={column}>{column}</ColumnItem>
-        ))}
+        {columns.map((column) => {
+          const { name, type } = getColumnNameAndType(column);
+          return (
+            <ColumnItem key={column}>
+              <ColumnName>{name}</ColumnName>
+              <ColumnType>{type}</ColumnType>
+            </ColumnItem>
+          );
+        })}
       </ColumnList>
     </TableInfoContainer>
   );

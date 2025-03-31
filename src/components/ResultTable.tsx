@@ -30,27 +30,33 @@ const TableContainer = styled.div`
 `;
 
 const Table = styled.table<{ columnResizeMode: ColumnResizeMode }>`
+  width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  width: 100%;
+  color: ${props => props.theme.text};
+  font-size: 14px;
   position: relative;
 
   th, td {
     padding: 8px 12px;
-    border: 1px solid #ddd;
+    text-align: left;
+    border: 1px solid ${props => props.theme.tableBorder};
     position: relative;
     background-clip: padding-box;
+    min-width: 200px; // Increased default column width
   }
 
   th {
-    background-color: #f2f2f2;
+    background-color: ${props => props.theme.tableHeader};
+    font-weight: 600;
     position: sticky;
     top: 0;
     user-select: none;
     z-index: 10;
+    color: ${props => props.theme.text};
     
     &:hover {
-      background-color: #e5e5e5;
+      background-color: ${props => props.theme.hover};
     }
 
     .resizer {
@@ -59,43 +65,64 @@ const Table = styled.table<{ columnResizeMode: ColumnResizeMode }>`
       top: 0;
       height: 100%;
       width: 4px;
-      background: rgba(0, 0, 0, 0.1);
+      background: ${props => props.theme.border};
       cursor: col-resize;
       user-select: none;
       touch-action: none;
       
       &:hover {
-        background: rgba(0, 0, 0, 0.2);
+        background: ${props => props.theme.primary};
       }
 
       &.isResizing {
-        background: rgba(0, 0, 0, 0.3);
+        background: ${props => props.theme.primary};
       }
     }
 
     .sort-indicator {
       margin-left: 4px;
+      color: ${props => props.theme.primary};
     }
 
     .filter-input {
       margin-top: 4px;
       padding: 4px;
       width: calc(100% - 8px);
-      border: 1px solid #ddd;
+      border: 1px solid ${props => props.theme.border};
       border-radius: 4px;
+      background: ${props => props.theme.inputBackground};
+      color: ${props => props.theme.text};
     }
   }
 
   tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: ${props => props.theme.tableRowAlt};
+  }
+
+  tr:nth-child(odd) {
+    background-color: ${props => props.theme.tableRow};
+  }
+
+  tr:hover {
+    background-color: ${props => props.theme.hover};
+  }
+
+  td {
+    color: ${props => props.theme.text};
   }
 `;
 
 const ActionBar = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
   align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+`;
+
+const ExportButton = styled.div`
+  transform: scale(0.8);
+  transform-origin: right center;
 `;
 
 const PaginationContainer = styled.div`
@@ -540,10 +567,12 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
             </ToggleButton>
           </DisplayModeToggle>
         </div>
-        <MultiFormatExporter 
-          data={exportData}
-          filename="query_results"
-        />
+        <ExportButton>
+          <MultiFormatExporter 
+            data={exportData}
+            filename="query_results"
+          />
+        </ExportButton>
       </ActionBar>
       <TableContainer>
         <Table columnResizeMode={columnResizeMode} style={{ width: table.getCenterTotalSize() }}>

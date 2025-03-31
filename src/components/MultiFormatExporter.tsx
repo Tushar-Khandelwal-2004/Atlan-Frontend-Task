@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { createPortal } from 'react-dom';
 
 const ExportContainer = styled.div`
   position: relative;
@@ -39,17 +40,18 @@ const DownloadButton = styled.button`
   }
 `;
 
-const ExportMenu = styled.div<{ isOpen: boolean }>`
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
+const DropdownMenu = styled.div<{ isOpen: boolean; position: { top: number; left: number } }>`
+  position: fixed;
+  top: ${props => props.position.top}px;
+  left: ${props => props.position.left}px;
+  background: ${props => props.theme.cardBackground};
+  border: 1px solid ${props => props.theme.border};
   border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  width: 150px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  min-width: 150px;
+  margin-top: 4px;
   display: ${props => props.isOpen ? 'block' : 'none'};
-  margin-top: 5px;
 `;
 
 const ExportOption = styled.button`
@@ -61,9 +63,11 @@ const ExportOption = styled.button`
   background: none;
   cursor: pointer;
   font-size: 14px;
+  color: ${props => props.theme.text};
   
   &:hover {
-    background-color: #f5f5f5;
+    background-color: ${props => props.theme.hover};
+    color: ${props => props.theme.primary};
   }
 
   &:first-child {
@@ -87,13 +91,22 @@ const MultiFormatExporter: React.FC<MultiFormatExporterProps> = ({
   filename = 'data' 
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   const toggleMenu = () => {
+    if (!isMenuOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + 4,
+        left: rect.right - 150
+      });
+    }
     setIsMenuOpen(!isMenuOpen);
   };
 
   // Close menu when clicking outside
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (isMenuOpen && !(event.target as HTMLElement).closest('.export-container')) {
         setIsMenuOpen(false);
@@ -219,25 +232,28 @@ const MultiFormatExporter: React.FC<MultiFormatExporterProps> = ({
 
   return (
     <ExportContainer className="export-container">
-      <DownloadButton onClick={toggleMenu} disabled={data.length === 0}>
+      <DownloadButton ref={buttonRef} onClick={toggleMenu} disabled={data.length === 0}>
         <span>Export Data</span>
         <span className="count">{data.length} rows</span>
       </DownloadButton>
       
-      <ExportMenu isOpen={isMenuOpen}>
-        <ExportOption onClick={handleExportCSV}>
-          CSV
-        </ExportOption>
-        <ExportOption onClick={handleExportJSON}>
-          JSON
-        </ExportOption>
-        <ExportOption onClick={handleExportExcel}>
-          Excel
-        </ExportOption>
-        <ExportOption onClick={handleExportPDF}>
-          PDF
-        </ExportOption>
-      </ExportMenu>
+      {createPortal(
+        <DropdownMenu isOpen={isMenuOpen} position={menuPosition}>
+          <ExportOption onClick={handleExportCSV}>
+            CSV
+          </ExportOption>
+          <ExportOption onClick={handleExportJSON}>
+            JSON
+          </ExportOption>
+          <ExportOption onClick={handleExportExcel}>
+            Excel
+          </ExportOption>
+          <ExportOption onClick={handleExportPDF}>
+            PDF
+          </ExportOption>
+        </DropdownMenu>,
+        document.body
+      )}
     </ExportContainer>
   );
 };

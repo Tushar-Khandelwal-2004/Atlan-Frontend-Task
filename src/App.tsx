@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { ThemeProvider } from 'styled-components';
+import { lightTheme, darkTheme } from './styles/theme';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import QueryHistory from './components/QueryHistory';
 import QueryEditor from './components/QueryEditor';
 import ResultTable from './components/ResultTable';
 import TableSelector from './components/TableSelector';
@@ -7,17 +12,44 @@ import QuerySelector from './components/QuerySelector';
 import MultiFormatExporter from './components/MultiFormatExporter';
 import TableInfo from './components/TableInfo';
 import { tablesData } from './data/tablesData';
+import { GlobalStyles } from './styles/GlobalStyles';
 
 const AppContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: ${props => props.theme.background};
+`;
+
+const MainContent = styled.main`
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-width: 0;
+  position: relative;
+`;
+
+const DashboardContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+`;
+
+const ContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1rem;
 `;
 
 const Header = styled.header`
   margin-bottom: 20px;
   h1 {
-    color: #333;
+    color: ${props => props.theme.text};
   }
 `;
 
@@ -34,13 +66,13 @@ const QuerySection = styled.section`
 
 const ActionBar = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-top: 10px;
 `;
 
 const RunButton = styled.button`
-  background-color: #4CAF50;
+  background-color: ${props => props.theme.primary};
   color: white;
   padding: 10px 15px;
   border: none;
@@ -49,12 +81,13 @@ const RunButton = styled.button`
   font-size: 16px;
   
   &:hover {
-    background-color: #45a049;
+    background-color: ${props => props.theme.primaryDark};
   }
 `;
 
 const ResultSection = styled.section`
   margin-top: 20px;
+  scroll-margin-top: 100px;
 `;
 
 const StatusBar = styled.div`
@@ -62,11 +95,26 @@ const StatusBar = styled.div`
   justify-content: space-between;
   margin-bottom: 10px;
   padding: 8px;
-  background-color: #f5f5f5;
+  background-color: ${props => props.theme.cardBackground};
   border-radius: 4px;
+  color: ${props => props.theme.text};
+`;
+
+const StyledFooter = styled.footer`
+  background: ${props => props.theme.cardBackground};
+  color: ${props => props.theme.text};
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+  border-top: 1px solid ${props => props.theme.border};
 `;
 
 const App: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
   const [tables, setTables] = useState<string[]>([]);
   const [selectedTable, setSelectedTable] = useState<string>('');
   const [queries, setQueries] = useState<any[]>([]);
@@ -77,6 +125,11 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [executionTime, setExecutionTime] = useState<number>(0);
   const [rowCount, setRowCount] = useState<number>(0);
+  const resultSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
 
   useEffect(() => {
     const tableNames = Object.keys(tablesData);
@@ -111,6 +164,10 @@ const App: React.FC = () => {
     setRowCount(results.length);
   }, [results]);
 
+  const handleThemeToggle = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   const handleTableChange = (table: string) => {
     setSelectedTable(table);
     setResults([]);
@@ -137,6 +194,9 @@ const App: React.FC = () => {
     
     const startTime = performance.now();
     
+    // Scroll to results section immediately
+    resultSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
     setTimeout(() => {
       const selectedQuery = queries.find(q => q.id === selectedQueryId);
       if (selectedQuery) {
@@ -145,56 +205,68 @@ const App: React.FC = () => {
       const endTime = performance.now();
       setExecutionTime(endTime - startTime);
       setIsLoading(false);
+      
+      // Scroll again after results are loaded to ensure proper positioning
+      setTimeout(() => {
+        resultSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }, 500);
   };
-  
 
   return (
-    <AppContainer>
-      <Header>
-        <h1>SQL Query Runner</h1>
-      </Header>
-      
-      <ControlsSection>
-        <TableSelector 
-          tables={tables} 
-          selectedTable={selectedTable} 
-          onTableChange={handleTableChange} 
-        />
-        <QuerySelector 
-          queries={queries} 
-          selectedQueryId={selectedQueryId} 
-          onQueryChange={handleQueryChange} 
-        />
-      </ControlsSection>
-      
-      {columns.length > 0 && (
-        <TableInfo tableName={selectedTable} columns={columns} />
-      )}
-      
-      <QuerySection>
-        <QueryEditor value={currentQuery} onChange={handleQueryEditorChange} />
-        
-        <ActionBar>
-          <RunButton onClick={executeQuery} disabled={isLoading}>
-            {isLoading ? 'Running...' : 'Run Query'}
-          </RunButton>
-          <MultiFormatExporter 
-            data={results} 
-            filename={`${selectedTable}_query_results`} 
-          />
-        </ActionBar>
-      </QuerySection>
-      
-      <ResultSection>
-        <StatusBar>
-          <span>{rowCount} rows returned</span>
-          <span>Execution time: {executionTime.toFixed(2)} ms</span>
-        </StatusBar>
-        
-        <ResultTable data={results} />
-      </ResultSection>
-    </AppContainer>
+    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+      <GlobalStyles />
+      <AppContainer>
+        <Navbar onThemeToggle={handleThemeToggle} isDarkMode={isDarkMode} />
+        <MainContent>
+          <QueryHistory onLoadQuery={setCurrentQuery} currentQuery={currentQuery} />
+          <DashboardContent>
+            <ContentWrapper>
+              <Header>
+                <h1>SQL Query Runner</h1>
+              </Header>
+              
+              <ControlsSection>
+                <TableSelector 
+                  tables={tables} 
+                  selectedTable={selectedTable} 
+                  onTableChange={handleTableChange} 
+                />
+                <QuerySelector 
+                  queries={queries} 
+                  selectedQueryId={selectedQueryId} 
+                  onQueryChange={handleQueryChange} 
+                />
+              </ControlsSection>
+              
+              {columns.length > 0 && (
+                <TableInfo tableName={selectedTable} columns={columns} />
+              )}
+              
+              <QuerySection>
+                <QueryEditor value={currentQuery} onChange={handleQueryEditorChange} />
+                
+                <ActionBar>
+                  <RunButton onClick={executeQuery} disabled={isLoading}>
+                    {isLoading ? 'Running...' : 'Run Query'}
+                  </RunButton>
+                </ActionBar>
+              </QuerySection>
+              
+              <ResultSection ref={resultSectionRef}>
+                <StatusBar>
+                  <span>{rowCount} rows returned</span>
+                  <span>Execution time: {executionTime.toFixed(2)} ms</span>
+                </StatusBar>
+                
+                <ResultTable data={results} />
+              </ResultSection>
+            </ContentWrapper>
+          </DashboardContent>
+        </MainContent>
+        <Footer />
+      </AppContainer>
+    </ThemeProvider>
   );
 };
 
