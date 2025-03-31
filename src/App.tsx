@@ -9,7 +9,7 @@ import QueryEditor from './components/QueryEditor';
 import ResultTable from './components/ResultTable';
 import TableSelector from './components/TableSelector';
 import QuerySelector from './components/QuerySelector';
-import MultiFormatExporter from './components/MultiFormatExporter';
+// import MultiFormatExporter from './components/MultiFormatExporter';
 import TableInfo from './components/TableInfo';
 import { tablesData } from './data/tablesData';
 import { GlobalStyles } from './styles/GlobalStyles';
