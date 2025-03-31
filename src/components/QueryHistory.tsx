@@ -1,6 +1,6 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import  { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import styled from 'styled-components';
-import { FaHistory, FaStar, FaTrash, FaCopy, FaChevronLeft, FaChevronRight, FaBars, FaRegStar } from 'react-icons/fa';
+import { FaHistory, FaStar, FaTrash, FaCopy, FaRegStar } from 'react-icons/fa';
 
 interface SavedQuery {
   id: string;
@@ -265,9 +265,10 @@ const SaveButton = styled.button`
 const QueryHistory = forwardRef<{ addToRecent: (query: string) => void }, QueryHistoryProps>(
   ({ onLoadQuery, currentQuery }, ref) => {
     const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'saved'>('saved');
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [savedQueries, setSavedQueries] = useState<SavedQuery[]>([]);
     const [recentQueries, setRecentQueries] = useState<string[]>([]);
-    const [favoriteQueries, setFavoriteQueries] = useState<string[]>([]);
+    // const [favoriteQueries, setFavoriteQueries] = useState<string[]>([]);
 
     useEffect(() => {
       const queries = localStorage.getItem('savedQueries');
@@ -387,45 +388,51 @@ const QueryHistory = forwardRef<{ addToRecent: (query: string) => void }, QueryH
     };
 
     return (
-      <SidebarContainer>
-        <SidebarContent>
-          <Header>
-            <FaHistory />
-            <h2>Query History</h2>
-          </Header>
+      <>
+        <MobileToggleButton onClick={() => setIsMobileOpen(!isMobileOpen)}>
+          <FaHistory />
+        </MobileToggleButton>
+        <MobileOverlay isVisible={isMobileOpen} onClick={() => setIsMobileOpen(false)} />
+        <SidebarContainer style={{ display: isMobileOpen ? 'flex' : undefined }}>
+          <SidebarContent>
+            <Header>
+              <FaHistory />
+              <h2>Query History</h2>
+            </Header>
 
-          {activeTab === 'saved' && (
-            <SaveButton onClick={saveQuery}>
-              Save Current Query
-            </SaveButton>
-          )}
+            {activeTab === 'saved' && (
+              <SaveButton onClick={saveQuery}>
+                Save Current Query
+              </SaveButton>
+            )}
 
-          <Tabs>
-            <Tab
-              active={activeTab === 'saved'}
-              onClick={() => setActiveTab('saved')}
-            >
-              Saved
-            </Tab>
-            <Tab
-              active={activeTab === 'favorites'}
-              onClick={() => setActiveTab('favorites')}
-            >
-              Favorites
-            </Tab>
-            <Tab
-              active={activeTab === 'recent'}
-              onClick={() => setActiveTab('recent')}
-            >
-              Recent
-            </Tab>
-          </Tabs>
+            <Tabs>
+              <Tab
+                active={activeTab === 'saved'}
+                onClick={() => setActiveTab('saved')}
+              >
+                Saved
+              </Tab>
+              <Tab
+                active={activeTab === 'favorites'}
+                onClick={() => setActiveTab('favorites')}
+              >
+                Favorites
+              </Tab>
+              <Tab
+                active={activeTab === 'recent'}
+                onClick={() => setActiveTab('recent')}
+              >
+                Recent
+              </Tab>
+            </Tabs>
 
-          <QueryList>
-            {renderQueries()}
-          </QueryList>
-        </SidebarContent>
-      </SidebarContainer>
+            <QueryList>
+              {renderQueries()}
+            </QueryList>
+          </SidebarContent>
+        </SidebarContainer>
+      </>
     );
   }
 );
