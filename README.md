@@ -47,8 +47,12 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
 ### 3. User Interface
   - Collapsible sidebar
   - Adaptive layout
-  - Light/Dark mode
+  - Light mode
+
   ![Alt text](/src/assets/light.png)
+
+  - Dark mode
+  
   ![Alt text](/src/assets/dark.png)
 
   - Smooth transitions
