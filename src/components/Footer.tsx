@@ -28,12 +28,12 @@ const Footer: React.FC = () => {
   return (
     <FooterContainer>
       <FooterContent>
-        <FooterText>© 2024 SQL Query Runner</FooterText>
+        <FooterText>© 2025 SQL Query Runner</FooterText>
         <FooterText>|</FooterText>
         <FooterText>All rights reserved</FooterText>
       </FooterContent>
       <FooterContent>
-        <FooterText>Made with ❤️</FooterText>
+        <FooterText>Made with ❤️ for Atlan</FooterText>
       </FooterContent>
     </FooterContainer>
   );
