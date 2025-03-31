@@ -12,9 +12,6 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
   - Favorites: Mark important queries for easy access
 - **Query Editor**
   - Syntax highlighting
-  - Auto-completion
-  - Error detection
-  - Responsive design
 
 ### 2. Data Visualization
 - **Advanced Table Features**
@@ -25,17 +22,13 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
   - Virtual scrolling for large datasets
   - Infinite scroll support
 - **Export Options**
-  - Multiple format support (CSV, JSON, Excel)
+  - Multiple format support (CSV, JSON, Excel, PDF)
   - Customizable export settings
 
 ### 3. User Interface
-- **Responsive Design**
-  - Mobile-first approach
   - Collapsible sidebar
   - Adaptive layout
-- **Theme Support**
   - Light/Dark mode
-  - Customizable color schemes
   - Smooth transitions
 
 ## Performance Optimization
@@ -43,9 +36,6 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
 ### 1. Initial Page Load Optimization
 - **Code Splitting**
   - Lazy loading of components
-  - Route-based code splitting
-  - Dynamic imports for heavy features
-- **Asset Optimization**
   - Minified CSS and JavaScript
   - Optimized images
   - Efficient font loading
@@ -92,15 +82,6 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
   - Efficient data structure
   - Quick access patterns
 
-### 3. UI Components
-- **Custom Components**
-  - Reusable design system
-  - Consistent styling
-  - Accessibility support
-- **Responsive Design**
-  - Mobile-first approach
-  - Breakpoint management
-  - Adaptive layouts
 
 ## Results and Impact
 
@@ -123,7 +104,7 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
 - Developer-friendly
 
 ## Conclusion
-SQL Query Runner demonstrates the power of modern web technologies in creating efficient, user-friendly applications. Through careful optimization and thoughtful feature implementation, we've created a tool that balances functionality with performance. The application serves as a testament to the importance of user experience, performance optimization, and code quality in modern web development.
+SQL Query Runner demonstrates the power of modern web technologies in creating efficient, user-friendly applications. Through careful optimization and thoughtful feature implementation, I have created a tool that balances functionality with performance. The application serves as a testament to the importance of user experience, performance optimization, and code quality in modern web development.
 
 ## Future Enhancements
 1. Real-time query execution
@@ -150,18 +131,16 @@ git clone [repository-url]
 npm install
 
 # Start the development server
-npm start
+npm run dev
 ```
 
 ### Usage
 1. Select a table from the dropdown
-2. Choose or write a query
-3. Click "Run Query" to execute
-4. View results in the table
-5. Use the various features to manage and export data
+2. Click "Run Query" to execute
+3. View results in the table
+4. Use the various features to manage and export data
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+![Alt text](/src/assets/logo.png)
