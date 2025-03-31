@@ -90,13 +90,13 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
 - Time to interactive: < 3 seconds
 - Smooth scrolling with 1000+ rows
 - Efficient memory usage
-
+![Alt text](/src/assets/Screenshot%202025-03-31%20161620.png)
 ### 2. User Experience
 - Intuitive interface
 - Responsive design
 - Smooth transitions
 - Accessible components
-
+![Alt text](/src/assets/Screenshot%202025-03-31%20161632.png)
 ### 3. Development Benefits
 - Maintainable codebase
 - Scalable architecture
@@ -143,4 +143,4 @@ npm run dev
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-![Alt text](/src/assets/logo.png)
+
