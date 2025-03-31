@@ -1,22 +1,22 @@
 # SQL Query Runner - A Modern Web Application
 
 ## Table of Contents  
-1. [Introduction](#introduction)  
-2. [Roadmap](#roadmap)  
-3. [Features](#features)  
-   - [Query Management](#query-management)  
-   - [Data Visualization](#data-visualization)  
-   - [User Interface](#user-interface)  
-4. [Performance Optimization](#performance-optimization)  
-5. [Data Management](#data-management)  
-6. [Results and Impact](#results-and-impact)  
-   - [Performance Metrics](#performance-metrics)  
-   - [User Experience](#user-experience)  
-   - [Development Benefits](#development-benefits)  
-7. [Future Enhancements](#future-enhancements)  
-8. [Getting Started](#getting-started)  
-9. [Usage](#usage)  
-10. [Contributing](#contributing)  
+1. [Introduction](#1-introduction)  
+2. [Roadmap](#2-roadmap)  
+3. [Features](#3-features)  
+   - [Query Management](#1-query-management)  
+   - [Data Visualization](#2-data-visualization)  
+   - [User Interface](#3-user-interface)  
+4. [Performance Optimization](#4-performance-optimization)  
+5. [Data Management](#5-data-management)  
+6. [Results and Impact](#6-results-and-impact)  
+   - [Performance Metrics](#1-performance-metrics)  
+   - [User Experience](#2-user-experience)  
+   - [Development Benefits](#3-development-benefits)  
+7. [Future Enhancements](#7-future-enhancements)  
+8. [Getting Started](#8-getting-started)  
+9. [Usage](#9-usage)  
+10. [Contributing](#10-contributing)  
 
 
 ## 1. Introduction
