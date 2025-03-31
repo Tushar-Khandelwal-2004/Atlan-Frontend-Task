@@ -21,14 +21,21 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
   - Pagination
   - Virtual scrolling for large datasets
   - Infinite scroll support
+  ![Alt text](/src/assets/image.png)
+
 - **Export Options**
   - Multiple format support (CSV, JSON, Excel, PDF)
   - Customizable export settings
+  - Filtered Data can be exported
+  ![Alt text](/src/assets/export.png)
 
 ### 3. User Interface
   - Collapsible sidebar
   - Adaptive layout
   - Light/Dark mode
+  ![Alt text](/src/assets/light.png)
+  ![Alt text](/src/assets/dark.png)
+
   - Smooth transitions
 
 ## Performance Optimization
@@ -125,7 +132,7 @@ SQL Query Runner demonstrates the power of modern web technologies in creating e
 ### Installation
 ```bash
 # Clone the repository
-git clone [repository-url]
+git clone [https://github.com/Tushar-Khandelwal-2004/Atlan-Frontend-Task]
 
 # Install dependencies
 npm install
