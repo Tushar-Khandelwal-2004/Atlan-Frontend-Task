@@ -22,6 +22,10 @@
 ## 1. Introduction
 SQL Query Runner is a sophisticated web application designed to provide a seamless experience for executing and managing SQL queries. Built with React and TypeScript, this application offers a modern, responsive interface with advanced features for query management, data visualization, and performance optimization.
 
+🔗 **Live Demo**: [Deployed App](https://atlan-frontend-task-eta.vercel.app/)  
+📺 **Video Explanation**: [Watch on YouTube](https://www.youtube.com/watch?v=3H22L6N7AZo)
+
+
 ## 2. Roadmap
 
   ![Alt text](/src/assets/Roadmap.png)
