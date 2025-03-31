@@ -1,16 +1,22 @@
-export const lightTheme = {
+import { DefaultTheme } from 'styled-components';
+
+export const lightTheme: DefaultTheme = {
   background: '#ffffff',
-  cardBackground: '#f8f9fa',
-  text: '#212529',
-  textSecondary: '#6c757d',
-  primary: '#2196F3',
-  primaryDark: '#1976D2',
-  border: '#dee2e6',
-  hover: '#e9ecef',
+  cardBackground: '#f5f5f5',
+  text: '#333333',
+  textSecondary: '#666666',
+  primary: '#1a73e8',
+  primaryDark: '#1557b0',
+  border: '#e0e0e0',
+  hover: '#f0f0f0',
   inputBackground: '#ffffff',
+  tableHeader: '#f5f5f5',
+  tableRow: '#ffffff',
+  tableRowAlt: '#f9f9f9',
+  tableBorder: '#e0e0e0'
 };
 
-export const darkTheme = {
+export const darkTheme: DefaultTheme = {
   background: '#1a1b26',
   cardBackground: '#24283b',
   text: '#a9b1d6',
@@ -20,10 +26,10 @@ export const darkTheme = {
   border: '#414868',
   hover: '#414868',
   inputBackground: '#24283b',
-  tableHeader: '#1a1b26',
+  tableHeader: '#1f2335',
   tableRow: '#24283b',
-  tableRowAlt: '#1f2335',
-  tableBorder: '#414868',
+  tableRowAlt: '#292e42',
+  tableBorder: '#414868'
 };
 
 export type Theme = typeof lightTheme; 

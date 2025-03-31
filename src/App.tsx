@@ -14,6 +14,25 @@ import TableInfo from './components/TableInfo';
 import { tablesData } from './data/tablesData';
 import { GlobalStyles } from './styles/GlobalStyles';
 
+// Define theme type for styled-components
+declare module 'styled-components' {
+  export interface DefaultTheme {
+    background: string;
+    cardBackground: string;
+    text: string;
+    textSecondary: string;
+    primary: string;
+    primaryDark: string;
+    border: string;
+    hover: string;
+    inputBackground: string;
+    tableHeader: string;
+    tableRow: string;
+    tableRowAlt: string;
+    tableBorder: string;
+  }
+}
+
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -87,7 +106,9 @@ const RunButton = styled.button`
 
 const ResultSection = styled.section`
   margin-top: 20px;
-  scroll-margin-top: 100px;
+  scroll-margin-top: 20px;
+  position: relative;
+  overflow: auto;
 `;
 
 const StatusBar = styled.div`
@@ -98,15 +119,6 @@ const StatusBar = styled.div`
   background-color: ${props => props.theme.cardBackground};
   border-radius: 4px;
   color: ${props => props.theme.text};
-`;
-
-const StyledFooter = styled.footer`
-  background: ${props => props.theme.cardBackground};
-  color: ${props => props.theme.text};
-  padding: 1rem;
-  text-align: center;
-  width: 100%;
-  border-top: 1px solid ${props => props.theme.border};
 `;
 
 const App: React.FC = () => {
@@ -126,6 +138,7 @@ const App: React.FC = () => {
   const [executionTime, setExecutionTime] = useState<number>(0);
   const [rowCount, setRowCount] = useState<number>(0);
   const resultSectionRef = useRef<HTMLDivElement>(null);
+  const queryHistoryRef = useRef<{ addToRecent: (query: string) => void }>(null);
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
@@ -194,21 +207,25 @@ const App: React.FC = () => {
     
     const startTime = performance.now();
     
-    // Scroll to results section immediately
-    resultSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    
     setTimeout(() => {
       const selectedQuery = queries.find(q => q.id === selectedQueryId);
       if (selectedQuery) {
         setResults(selectedQuery.results);
+        // Update recent queries in QueryHistory
+        if (queryHistoryRef.current) {
+          queryHistoryRef.current.addToRecent(currentQuery);
+        }
       }
       const endTime = performance.now();
       setExecutionTime(endTime - startTime);
       setIsLoading(false);
       
-      // Scroll again after results are loaded to ensure proper positioning
+      // Ensure results are visible by scrolling with a slight delay to allow for state updates
       setTimeout(() => {
-        resultSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        resultSectionRef.current?.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
       }, 100);
     }, 500);
   };
@@ -219,7 +236,11 @@ const App: React.FC = () => {
       <AppContainer>
         <Navbar onThemeToggle={handleThemeToggle} isDarkMode={isDarkMode} />
         <MainContent>
-          <QueryHistory onLoadQuery={setCurrentQuery} currentQuery={currentQuery} />
+          <QueryHistory 
+            ref={queryHistoryRef}
+            onLoadQuery={setCurrentQuery} 
+            currentQuery={currentQuery} 
+          />
           <DashboardContent>
             <ContentWrapper>
               <Header>

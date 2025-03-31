@@ -24,91 +24,70 @@ import MultiFormatExporter from './MultiFormatExporter';
 
 // Styled components for table
 const TableContainer = styled.div`
-  overflow-x: auto;
-  max-height: 500px;
   width: 100%;
+  overflow-x: auto;
+  border: 1px solid ${props => props.theme.tableBorder};
+  border-radius: 4px;
 `;
 
-const Table = styled.table<{ columnResizeMode: ColumnResizeMode }>`
+const Table = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   color: ${props => props.theme.text};
-  font-size: 14px;
-  position: relative;
-
+  
   th, td {
-    padding: 8px 12px;
+    padding: 12px;
     text-align: left;
     border: 1px solid ${props => props.theme.tableBorder};
     position: relative;
-    background-clip: padding-box;
-    min-width: 200px; // Increased default column width
+    min-width: 150px;
+    max-width: 800px;
   }
 
   th {
     background-color: ${props => props.theme.tableHeader};
     font-weight: 600;
-    position: sticky;
-    top: 0;
     user-select: none;
-    z-index: 10;
-    color: ${props => props.theme.text};
+    position: relative;
     
-    &:hover {
-      background-color: ${props => props.theme.hover};
-    }
-
     .resizer {
       position: absolute;
       right: 0;
       top: 0;
       height: 100%;
       width: 4px;
-      background: ${props => props.theme.border};
       cursor: col-resize;
       user-select: none;
       touch-action: none;
-      
+      opacity: 0;
+      transition: opacity 0.2s;
+      background: ${props => props.theme.primary};
+
       &:hover {
-        background: ${props => props.theme.primary};
+        opacity: 0.5;
       }
 
       &.isResizing {
+        opacity: 1;
         background: ${props => props.theme.primary};
       }
     }
-
-    .sort-indicator {
-      margin-left: 4px;
-      color: ${props => props.theme.primary};
-    }
-
-    .filter-input {
-      margin-top: 4px;
-      padding: 4px;
-      width: calc(100% - 8px);
-      border: 1px solid ${props => props.theme.border};
-      border-radius: 4px;
-      background: ${props => props.theme.inputBackground};
-      color: ${props => props.theme.text};
-    }
-  }
-
-  tr:nth-child(even) {
-    background-color: ${props => props.theme.tableRowAlt};
-  }
-
-  tr:nth-child(odd) {
-    background-color: ${props => props.theme.tableRow};
-  }
-
-  tr:hover {
-    background-color: ${props => props.theme.hover};
   }
 
   td {
-    color: ${props => props.theme.text};
+    background-color: ${props => props.theme.tableRow};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tr:nth-child(even) td {
+    background-color: ${props => props.theme.tableRowAlt};
+  }
+
+  tr:hover td {
+    background-color: ${props => props.theme.hover};
   }
 `;
 
@@ -575,6 +554,7 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
         </ExportButton>
       </ActionBar>
       <TableContainer>
+        {/* @ts-ignore */}
         <Table columnResizeMode={columnResizeMode} style={{ width: table.getCenterTotalSize() }}>
           <thead>
             {table.getHeaderGroups().map((headerGroup: HeaderGroup<TableData>) => (

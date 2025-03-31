@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import styled from 'styled-components';
-import { FaHistory, FaStar, FaTrash, FaCopy, FaChevronLeft, FaChevronRight, FaBars } from 'react-icons/fa';
+import { FaHistory, FaStar, FaTrash, FaCopy, FaChevronLeft, FaChevronRight, FaBars, FaRegStar } from 'react-icons/fa';
 
 interface SavedQuery {
   id: string;
@@ -262,121 +262,172 @@ const SaveButton = styled.button`
   }
 `;
 
-const QueryHistory: React.FC<QueryHistoryProps> = ({ onLoadQuery, currentQuery }) => {
-  const [activeTab, setActiveTab] = useState<'recent' | 'favorites'>('recent');
-  const [savedQueries, setSavedQueries] = useState<SavedQuery[]>([]);
+const QueryHistory = forwardRef<{ addToRecent: (query: string) => void }, QueryHistoryProps>(
+  ({ onLoadQuery, currentQuery }, ref) => {
+    const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'saved'>('saved');
+    const [savedQueries, setSavedQueries] = useState<SavedQuery[]>([]);
+    const [recentQueries, setRecentQueries] = useState<string[]>([]);
+    const [favoriteQueries, setFavoriteQueries] = useState<string[]>([]);
 
-  useEffect(() => {
-    const queries = localStorage.getItem('savedQueries');
-    if (queries) {
-      setSavedQueries(JSON.parse(queries));
-    }
-  }, []);
+    useEffect(() => {
+      const queries = localStorage.getItem('savedQueries');
+      if (queries) {
+        setSavedQueries(JSON.parse(queries));
+      }
+      const recent = localStorage.getItem('recentQueries');
+      if (recent) {
+        setRecentQueries(JSON.parse(recent));
+      }
+    }, []);
 
-  const saveCurrentQuery = () => {
-    if (!currentQuery.trim()) return;
+    useImperativeHandle(ref, () => ({
+      addToRecent: (query: string) => {
+        setRecentQueries(prev => {
+          const filtered = prev.filter(q => q !== query);
+          const newRecent = [query, ...filtered].slice(0, 10);
+          localStorage.setItem('recentQueries', JSON.stringify(newRecent));
+          return newRecent;
+        });
+      }
+    }));
 
-    const newQuery: SavedQuery = {
-      id: Date.now().toString(),
-      name: `Query ${savedQueries.length + 1}`,
-      query: currentQuery,
-      timestamp: new Date().toISOString(),
-      isFavorite: false,
+    const saveQuery = () => {
+      if (currentQuery.trim()) {
+        const newQuery: SavedQuery = {
+          id: Date.now().toString(),
+          name: `Query ${savedQueries.length + 1}`,
+          query: currentQuery,
+          timestamp: new Date().toISOString(),
+          isFavorite: false,
+        };
+
+        const updatedQueries = [...savedQueries, newQuery];
+        setSavedQueries(updatedQueries);
+        localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
+      }
     };
 
-    const updatedQueries = [...savedQueries, newQuery];
-    setSavedQueries(updatedQueries);
-    localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
-  };
+    const toggleFavorite = (id: string) => {
+      const updatedQueries = savedQueries.map(query =>
+        query.id === id ? { ...query, isFavorite: !query.isFavorite } : query
+      );
+      setSavedQueries(updatedQueries);
+      localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
+    };
 
-  const toggleFavorite = (id: string) => {
-    const updatedQueries = savedQueries.map(query =>
-      query.id === id ? { ...query, isFavorite: !query.isFavorite } : query
-    );
-    setSavedQueries(updatedQueries);
-    localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
-  };
+    const deleteQuery = (query: string, type: 'recent' | 'saved') => {
+      if (type === 'recent') {
+        const updatedRecent = recentQueries.filter(q => q !== query);
+        setRecentQueries(updatedRecent);
+        localStorage.setItem('recentQueries', JSON.stringify(updatedRecent));
+      } else {
+        const updatedSaved = savedQueries.filter(q => q.query !== query);
+        setSavedQueries(updatedSaved);
+        localStorage.setItem('savedQueries', JSON.stringify(updatedSaved));
+      }
+    };
 
-  const deleteQuery = (id: string) => {
-    const updatedQueries = savedQueries.filter(query => query.id !== id);
-    setSavedQueries(updatedQueries);
-    localStorage.setItem('savedQueries', JSON.stringify(updatedQueries));
-  };
+    const copyQuery = (query: string, queryId: string) => {
+      navigator.clipboard.writeText(query);
+      const button = document.querySelector(`[data-query-id="${queryId}"]`);
+      if (button) {
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.classList.remove('copied');
+        }, 1000);
+      }
+    };
 
-  const copyQuery = (query: string, queryId: string) => {
-    navigator.clipboard.writeText(query);
-    // Add a visual feedback for copy action
-    const button = document.querySelector(`[data-query-id="${queryId}"]`);
-    if (button) {
-      button.classList.add('copied');
-      setTimeout(() => {
-        button.classList.remove('copied');
-      }, 1000);
-    }
-  };
+    const renderQueries = () => {
+      let queries: string[] = [];
+      switch (activeTab) {
+        case 'recent':
+          queries = recentQueries;
+          break;
+        case 'favorites':
+          queries = savedQueries.filter(q => q.isFavorite).map(q => q.query);
+          break;
+        case 'saved':
+          queries = savedQueries.map(q => q.query);
+          break;
+      }
 
-  const filteredQueries = savedQueries.filter(query =>
-    activeTab === 'favorites' ? query.isFavorite : true
-  );
-
-  return (
-    <SidebarContainer>
-      <SidebarContent>
-        <Header>
-          <FaHistory />
-          <h2>Query History</h2>
-        </Header>
-
-        <SaveButton onClick={saveCurrentQuery}>
-          Save Current Query
-        </SaveButton>
-
-        <Tabs>
-          <Tab
-            active={activeTab === 'recent'}
-            onClick={() => setActiveTab('recent')}
-          >
-            Recent
-          </Tab>
-          <Tab
-            active={activeTab === 'favorites'}
-            onClick={() => setActiveTab('favorites')}
-          >
-            Favorites
-          </Tab>
-        </Tabs>
-
-        <QueryList>
-          {filteredQueries.map(query => (
-            <QueryItem key={query.id}>
-              <QueryHeader>
-                <QueryName>{query.name}</QueryName>
-                <QueryActions>
-                  <ActionButton 
-                    onClick={() => copyQuery(query.query, query.id)}
-                    data-query-id={query.id}
-                  >
-                    <FaCopy />
-                  </ActionButton>
-                  <ActionButton onClick={() => toggleFavorite(query.id)}>
+      return queries.map((query, index) => (
+        <QueryItem key={index}>
+          <QueryHeader>
+            <QueryName>{query}</QueryName>
+            <QueryActions>
+              <ActionButton 
+                onClick={() => copyQuery(query, index.toString())}
+                data-query-id={index.toString()}
+              >
+                <FaCopy />
+              </ActionButton>
+              {activeTab !== 'recent' && (
+                <ActionButton onClick={() => toggleFavorite(savedQueries.find(q => q.query === query)?.id || '')}>
+                  {savedQueries.find(q => q.query === query)?.isFavorite ? (
                     <FaStar style={{ 
-                      color: query.isFavorite ? '#ffd700' : 'inherit',
+                      color: '#ffd700',
                       transition: 'transform 0.2s ease',
-                      transform: query.isFavorite ? 'scale(1.2)' : 'scale(1)'
+                      transform: 'scale(1.2)'
                     }} />
-                  </ActionButton>
-                  <ActionButton onClick={() => deleteQuery(query.id)}>
-                    <FaTrash />
-                  </ActionButton>
-                </QueryActions>
-              </QueryHeader>
-              <QueryPreview>{query.query}</QueryPreview>
-            </QueryItem>
-          ))}
-        </QueryList>
-      </SidebarContent>
-    </SidebarContainer>
-  );
-};
+                  ) : (
+                    <FaRegStar />
+                  )}
+                </ActionButton>
+              )}
+              <ActionButton onClick={() => deleteQuery(query, activeTab === 'recent' ? 'recent' : 'saved')}>
+                <FaTrash />
+              </ActionButton>
+            </QueryActions>
+          </QueryHeader>
+          <QueryPreview onClick={() => onLoadQuery(query)}>{query}</QueryPreview>
+        </QueryItem>
+      ));
+    };
+
+    return (
+      <SidebarContainer>
+        <SidebarContent>
+          <Header>
+            <FaHistory />
+            <h2>Query History</h2>
+          </Header>
+
+          {activeTab === 'saved' && (
+            <SaveButton onClick={saveQuery}>
+              Save Current Query
+            </SaveButton>
+          )}
+
+          <Tabs>
+            <Tab
+              active={activeTab === 'saved'}
+              onClick={() => setActiveTab('saved')}
+            >
+              Saved
+            </Tab>
+            <Tab
+              active={activeTab === 'favorites'}
+              onClick={() => setActiveTab('favorites')}
+            >
+              Favorites
+            </Tab>
+            <Tab
+              active={activeTab === 'recent'}
+              onClick={() => setActiveTab('recent')}
+            >
+              Recent
+            </Tab>
+          </Tabs>
+
+          <QueryList>
+            {renderQueries()}
+          </QueryList>
+        </SidebarContent>
+      </SidebarContainer>
+    );
+  }
+);
 
 export default QueryHistory; 
