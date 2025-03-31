@@ -8,10 +8,14 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
 ### 1. Query Management
 - **Multiple Query Sections**
   - Saved Queries: Store frequently used queries for quick access
-  ![Alt text](/src/assets/saved.png)
+  <div style="width: 300px; margin: auto;">
+  <img src="/src/assets/saved.png" alt="Alt text" style="width: 300px;">
+</div>
 
   - Recent Queries: Automatically track and display recently executed queries
-  ![Alt text](/src/assets/recent.png)
+  <div style="width: 300px; margin: auto;">
+  <img src="/src/assets/recent.png" alt="Alt text" style="width: 300px;">
+</div>
 
   - Favorites: Mark important queries for easy access
   <div style="width: 300px; margin: auto;">
