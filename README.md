@@ -15,8 +15,9 @@ SQL Query Runner is a sophisticated web application designed to provide a seamle
 
   - Favorites: Mark important queries for easy access
   <div style="width: 20px; margin: auto;">
-  <img src="/src/assets/fav.png" alt="Alt text" style="width: 100%; height: auto;">
+  <img src="/src/assets/fav.png" alt="Alt text" style="width: 20px; height: 20px;">
 </div>
+
 
 
 
